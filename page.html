@@ -27,14 +27,16 @@
         <h2 class="heading">Contact me for <span>Services!!!</span></h2>
         <form action="https://api.web3forms.com/submit" method="POST">
             <div class="input-box">
+                <input type="hidden" name="access_key" value="10742d73-0f88-4ed2-a193-29159882cd9f">
                 <input type="text" name="fullname" placeholder="Full Name">
                 <input type="email" name="email" placeholder="Email Id">
             </div>
             <div class="input-box">
                 <input type="number" name="phone" placeholder="Mobile Number">
                 <input type="text" name="service" placeholder="Service Name">
+                <textarea name="message" id="" cols="30" rows="10" placeholder="Tell me more about your required service"></textarea>
             </div>
-            <textarea name="" id="" cols="30" rows="10" placeholder="Tell me more about your required service"></textarea>
+            <input type="hidden" name="redirect" value="https://web3forms.com/success">
             <a href="index.html" class="btn">Book Service</a>
         </form>
     </section>
