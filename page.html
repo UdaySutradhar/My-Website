@@ -28,12 +28,12 @@
         <form action="https://api.web3forms.com/submit" method="POST">
             <div class="input-box">
                 <input type="hidden" name="access_key" value="10742d73-0f88-4ed2-a193-29159882cd9f">
-                <input type="text" name="fullname" placeholder="Full Name">
-                <input type="email" name="email" placeholder="Email Id">
+                <input type="text" name="fullname" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email Id" required>
             </div>
             <div class="input-box">
-                <input type="number" name="phone" placeholder="Mobile Number">
-                <input type="text" name="service" placeholder="Service Name">
+                <input type="number" name="phone" placeholder="Mobile Number" required>
+                <input type="text" name="service" placeholder="Service Name" required>
                 <textarea name="message" id="" cols="30" rows="10" placeholder="Tell me more about your required service"></textarea>
             </div>
             <input type="hidden" name="redirect" value="https://web3forms.com/success">
