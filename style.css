@@ -113,10 +113,11 @@ span{ color:var(--main-color); }
 .rail-window{
   overflow:auto; overflow-y:hidden;
   scroll-behavior:smooth;
-  scroll-snap-type:x proximity;     /* gentle snap */
-  padding: 0 24px;                   /* space for peek */
+  scroll-snap-type:x proximity;
+  padding: 0 24px;
   scrollbar-width:none; -ms-overflow-style:none;
-  scroll-padding-right: 24px;        /* allow the last card to fully snap in */
+  scroll-padding-left: 24px;   /* snap aid at start */
+  scroll-padding-right: 64px;  /* snap aid at end (matches endcap) */
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -127,22 +128,22 @@ span{ color:var(--main-color); }
   list-style:none;
 }
 
-/* Spacer at the end so last card is never clipped */
-.rail-spacer{
-  flex: 0 0 24px;           /* match peek padding */
+/* End-cap so last card never clips */
+.rail-endcap{
+  flex: 0 0 64px;
   pointer-events: none;
 }
 
 .rail-card{
   flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view on desktop */
   scroll-snap-align: start;
-  scroll-snap-stop: always;            /* stronger snapping */
-  aspect-ratio: 16/9;                  /* taller feel */
+  scroll-snap-stop: always;
+  aspect-ratio: 16/9;
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
 @media (min-width:1400px){
-  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per view on very wide */
+  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per very wide */
 }
 
 @media (max-width:1200px){
@@ -150,11 +151,11 @@ span{ color:var(--main-color); }
 }
 
 @media (max-width:900px){
-  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per on tablets */
+  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per tablets */
 }
 
 @media (max-width:560px){
-  .rail-card{ flex-basis: 100%; }                      /* 1 per on phones */
+  .rail-card{ flex-basis: 100%; }                      /* 1 per phones */
 }
 
 /* Hover lift (desktop only) */
@@ -201,7 +202,7 @@ span{ color:var(--main-color); }
   background: var(--text-color); color: var(--second-bg-color);
 }
 
-/* Edge arrows (appear on hover like Netflix) */
+/* Edge arrows */
 .rail-btn{
   position:absolute; top:50%; transform:translateY(-50%);
   width:44px; height:88px; border:none; cursor:pointer;
@@ -271,9 +272,10 @@ span{ color:var(--main-color); }
   .portfolio h2{ margin-bottom:3rem; }
 }
 
-/* Final safety override (keep or remove once verified) */
-.rail-window { padding:0 24px !important; scroll-padding-right:24px !important; }
+/* Final safety override (can remove !important once verified) */
+.rail-window { padding:0 24px !important; scroll-padding-left:24px !important; scroll-padding-right:64px !important; }
 .rail-track { gap:1.2rem !important; }
+.rail-endcap{ flex:0 0 64px !important; }
 .rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; scroll-snap-stop: always !important; }
 @media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
 @media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
