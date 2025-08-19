@@ -116,8 +116,7 @@ span{ color:var(--main-color); }
   scroll-snap-type:x proximity;     /* gentle snap */
   padding: 0 24px;                   /* space for peek */
   scrollbar-width:none; -ms-overflow-style:none;
-  /* ensure last card can fully snap into view */
-  scroll-padding-right: 24px;
+  scroll-padding-right: 24px;        /* allow the last card to fully snap in */
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -128,12 +127,17 @@ span{ color:var(--main-color); }
   list-style:none;
 }
 
-/* Bigger: 3 per view on desktop, 4 on very-wide, 2 on tablets, 1 on phones */
+/* Spacer at the end so last card is never clipped */
+.rail-spacer{
+  flex: 0 0 24px;           /* match peek padding */
+  pointer-events: none;
+}
+
 .rail-card{
-  flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view */
+  flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view on desktop */
   scroll-snap-align: start;
   scroll-snap-stop: always;            /* stronger snapping */
-  aspect-ratio: 16/9;                  /* taller to match bigger width */
+  aspect-ratio: 16/9;                  /* taller feel */
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
@@ -206,8 +210,8 @@ span{ color:var(--main-color); }
   opacity:0; pointer-events:none; transition: opacity .2s ease;
 }
 .rail-btn i{ font-size:28px; }
-.rail-prev{ left:0; }   /* left edge */
-.rail-next{ right:0; }  /* right edge */
+.rail-prev{ left:0; }
+.rail-next{ right:0; }
 .rail.show-arrows .rail-btn{ opacity:1; pointer-events:auto; }
 
 /* Contact */
@@ -267,7 +271,7 @@ span{ color:var(--main-color); }
   .portfolio h2{ margin-bottom:3rem; }
 }
 
-/* Final override to guarantee sizing wins (safe; remove !important if desired) */
+/* Final safety override (keep or remove once verified) */
 .rail-window { padding:0 24px !important; scroll-padding-right:24px !important; }
 .rail-track { gap:1.2rem !important; }
 .rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; scroll-snap-stop: always !important; }
