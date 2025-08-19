@@ -113,11 +113,9 @@ span{ color:var(--main-color); }
 .rail-window{
   overflow:auto; overflow-y:hidden;
   scroll-behavior:smooth;
-  scroll-snap-type:x proximity;
-  padding: 0 24px;
+  scroll-snap-type:x proximity;     /* gentle snap */
+  padding: 0 24px;                   /* space for peek */
   scrollbar-width:none; -ms-overflow-style:none;
-  scroll-padding-left: 24px;   /* snap aid at start */
-  scroll-padding-right: 64px;  /* snap aid at end (matches endcap) */
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -128,34 +126,33 @@ span{ color:var(--main-color); }
   list-style:none;
 }
 
-/* End-cap so last card never clips */
-.rail-endcap{
-  flex: 0 0 64px;
-  pointer-events: none;
-}
-
+/* Bigger again: 3 per view on desktop, 4 on very-wide, 2 on tablets, 1 on phones */
 .rail-card{
-  flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view on desktop */
+  /* Desktop default: 3 per viewport */
+  flex: 0 0 calc((100% - 2.4rem) / 3); /* gap=1.2rem * (3-1) */
   scroll-snap-align: start;
-  scroll-snap-stop: always;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16/9;                  /* taller to match bigger width */
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
 @media (min-width:1400px){
-  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per very wide */
+  /* Very wide: 4 per view */
+  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); }
 }
 
 @media (max-width:1200px){
-  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); } /* keep 3 per on laptops */
+  /* Laptops: keep 3 per */
+  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); }
 }
 
 @media (max-width:900px){
-  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per tablets */
+  /* Tablets/large phones: 2 per */
+  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); }
 }
 
 @media (max-width:560px){
-  .rail-card{ flex-basis: 100%; }                      /* 1 per phones */
+  /* Small phones: 1 per */
+  .rail-card{ flex-basis: 100%; }
 }
 
 /* Hover lift (desktop only) */
@@ -202,7 +199,7 @@ span{ color:var(--main-color); }
   background: var(--text-color); color: var(--second-bg-color);
 }
 
-/* Edge arrows */
+/* Edge arrows (appear on hover like Netflix) */
 .rail-btn{
   position:absolute; top:50%; transform:translateY(-50%);
   width:44px; height:88px; border:none; cursor:pointer;
@@ -211,8 +208,8 @@ span{ color:var(--main-color); }
   opacity:0; pointer-events:none; transition: opacity .2s ease;
 }
 .rail-btn i{ font-size:28px; }
-.rail-prev{ left:0; }
-.rail-next{ right:0; }
+.rail-prev{ left:0; }   /* left edge */
+.rail-next{ right:0; }  /* right edge */
 .rail.show-arrows .rail-btn{ opacity:1; pointer-events:auto; }
 
 /* Contact */
@@ -255,10 +252,8 @@ span{ color:var(--main-color); }
 @media (max-width:768px){
   #menu-icon{ display:block; }
   .navbar{
-    position:absolute; top:100%; left:0; width:100%; padding:1rem 3%;
-    background:var(--bg-color);
-    border-top:.1rem solid rgba(0,0,0,.2); box-shadow:0 .5rem 1rem rgba(0,0,0,.2);
-    display:none;
+    position:absolute; top:100%; left:0; width:100%; padding:1rem 3%; background:var(--bg-color);
+    border-top:.1rem solid rgba(0,0,0,.2); box-shadow:0 .5rem 1rem rgba(0,0,0,.2); display:none;
   }
   .navbar.active{ display:block; }
   .navbar a{ display:block; font-size:2rem; margin:3rem 0; }
@@ -272,11 +267,21 @@ span{ color:var(--main-color); }
   .portfolio h2{ margin-bottom:3rem; }
 }
 
-/* Final safety override (can remove !important once verified) */
-.rail-window { padding:0 24px !important; scroll-padding-left:24px !important; scroll-padding-right:64px !important; }
+/* --- Rail size override (ensure new size always wins) --- */
+.rail-window { padding:0 24px !important; }
 .rail-track { gap:1.2rem !important; }
-.rail-endcap{ flex:0 0 64px !important; }
-.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; scroll-snap-stop: always !important; }
+.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; }
 @media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
 @media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
 @media (max-width:560px){ .rail-card{ flex-basis: 100% !important; } }
+
+@media (max-width:450px){
+  html{ font-size:50%; }
+  .contact form .input-box input{ width:100%; }
+}
+@media (max-width:450px){
+  .home-img img{ width:90vw; }
+  .about-img img{ width:90vw; }
+  .footer{ flex-direction:column-reverse; }
+  .footer p{ text-align:center; margin-top:2rem; }
+}
