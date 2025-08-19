@@ -7,7 +7,7 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=8" />
+    <link rel="stylesheet" href="style.css?v=5" />
   </head>
   <body>
     <!-- Preloader -->
@@ -223,9 +223,6 @@
                 </div>
               </article>
             </li>
-
-            <!-- End-cap ensures last card can fully enter view -->
-            <li class="rail-endcap" aria-hidden="true"></li>
           </ul>
         </div>
 
@@ -319,24 +316,13 @@
       const prevBtn = document.querySelector('.rail-prev');
       const nextBtn = document.querySelector('.rail-next');
 
-      // Step by exactly one card + gap width
-      function cardStep() {
-        const track = document.querySelector('.rail-track');
-        const firstCard = track?.querySelector('.rail-card');
-        if (!firstCard) return railWindow.clientWidth; // fallback
-        const cardRect = firstCard.getBoundingClientRect();
-        const gap = parseFloat(getComputedStyle(track).gap || '0');
-        return Math.round(cardRect.width + gap);
+      function pageSize() {
+        const peek = 24; // smaller peek for bigger cards
+        return railWindow.clientWidth - peek;
       }
-
-      // Clamp scroll so we never stop short or overshoot
       function page(dir = 1) {
-        const maxScroll = railWindow.scrollWidth - railWindow.clientWidth;
-        const next = railWindow.scrollLeft + dir * cardStep();
-        const clamped = Math.max(0, Math.min(next, maxScroll));
-        railWindow.scrollTo({ left: clamped, behavior: 'smooth' });
+        railWindow.scrollBy({ left: dir * pageSize(), behavior: 'smooth' });
       }
-
       prevBtn.addEventListener('click', () => page(-1));
       nextBtn.addEventListener('click', () => page(1));
 
@@ -350,7 +336,6 @@
         }
       }, { passive: false });
 
-      // Drag to scroll
       let isDown = false, startX = 0, startLeft = 0;
       railWindow.addEventListener('mousedown', (e) => {
         isDown = true; railWindow.classList.add('dragging');
