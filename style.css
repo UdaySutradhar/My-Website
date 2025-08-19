@@ -266,6 +266,15 @@ span{ color:var(--main-color); }
   .services h2{ margin-bottom:3rem; }
   .portfolio h2{ margin-bottom:3rem; }
 }
+
+/* --- Rail size override (ensure new size always wins) --- */
+.rail-window { padding:0 24px !important; }
+.rail-track { gap:1.2rem !important; }
+.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; }
+@media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
+@media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
+@media (max-width:560px){ .rail-card{ flex-basis: 100% !important; } }
+
 @media (max-width:450px){
   html{ font-size:50%; }
   .contact form .input-box input{ width:100%; }
