@@ -126,39 +126,29 @@ span{ color:var(--main-color); }
   list-style:none;
 }
 
-/* Bigger again: 3 per view on desktop, 4 on very-wide, 2 on tablets, 1 on phones */
 .rail-card{
-  /* Desktop default: 3 per viewport */
-  flex: 0 0 calc((100% - 2.4rem) / 3); /* gap=1.2rem * (3-1) */
-  scroll-snap-align: start;
-  aspect-ratio: 16/9;                  /* taller to match bigger width */
+  flex: 0 0 calc((100% - 4.8rem) / 5); /* 5 per viewport on desktop */
+  scroll-snap-align:start;
+  aspect-ratio: 16/10;                /* normalize height */
   transition: transform .2s ease, box-shadow .2s ease;
 }
-
 @media (min-width:1400px){
-  /* Very wide: 4 per view */
-  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); }
+  .rail-card{ flex-basis: calc((100% - 6rem) / 6); } /* 6 per very wide */
 }
-
-@media (max-width:1200px){
-  /* Laptops: keep 3 per */
-  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); }
+@media (max-width: 992px){
+  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per */
 }
-
-@media (max-width:900px){
-  /* Tablets/large phones: 2 per */
-  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); }
+@media (max-width: 768px){
+  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); } /* 3 per */
 }
-
-@media (max-width:560px){
-  /* Small phones: 1 per */
-  .rail-card{ flex-basis: 100%; }
+@media (max-width: 560px){
+  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per */
 }
 
 /* Hover lift (desktop only) */
 @media (hover:hover){
   .rail-window:not(.dragging) .rail-card:hover{
-    transform: scale(1.07);
+    transform: scale(1.04);
     z-index: 2;
   }
 }
@@ -266,15 +256,6 @@ span{ color:var(--main-color); }
   .services h2{ margin-bottom:3rem; }
   .portfolio h2{ margin-bottom:3rem; }
 }
-
-/* --- Rail size override (ensure new size always wins) --- */
-.rail-window { padding:0 24px !important; }
-.rail-track { gap:1.2rem !important; }
-.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; }
-@media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
-@media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
-@media (max-width:560px){ .rail-card{ flex-basis: 100% !important; } }
-
 @media (max-width:450px){
   html{ font-size:50%; }
   .contact form .input-box input{ width:100%; }
