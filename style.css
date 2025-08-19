@@ -116,6 +116,8 @@ span{ color:var(--main-color); }
   scroll-snap-type:x proximity;     /* gentle snap */
   padding: 0 24px;                   /* space for peek */
   scrollbar-width:none; -ms-overflow-style:none;
+  /* ensure last card can fully snap into view */
+  scroll-padding-right: 24px;
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -126,33 +128,29 @@ span{ color:var(--main-color); }
   list-style:none;
 }
 
-/* Bigger again: 3 per view on desktop, 4 on very-wide, 2 on tablets, 1 on phones */
+/* Bigger: 3 per view on desktop, 4 on very-wide, 2 on tablets, 1 on phones */
 .rail-card{
-  /* Desktop default: 3 per viewport */
-  flex: 0 0 calc((100% - 2.4rem) / 3); /* gap=1.2rem * (3-1) */
+  flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view */
   scroll-snap-align: start;
+  scroll-snap-stop: always;            /* stronger snapping */
   aspect-ratio: 16/9;                  /* taller to match bigger width */
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
 @media (min-width:1400px){
-  /* Very wide: 4 per view */
-  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); }
+  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per view on very wide */
 }
 
 @media (max-width:1200px){
-  /* Laptops: keep 3 per */
-  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); }
+  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); } /* keep 3 per on laptops */
 }
 
 @media (max-width:900px){
-  /* Tablets/large phones: 2 per */
-  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); }
+  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per on tablets */
 }
 
 @media (max-width:560px){
-  /* Small phones: 1 per */
-  .rail-card{ flex-basis: 100%; }
+  .rail-card{ flex-basis: 100%; }                      /* 1 per on phones */
 }
 
 /* Hover lift (desktop only) */
@@ -252,8 +250,10 @@ span{ color:var(--main-color); }
 @media (max-width:768px){
   #menu-icon{ display:block; }
   .navbar{
-    position:absolute; top:100%; left:0; width:100%; padding:1rem 3%; background:var(--bg-color);
-    border-top:.1rem solid rgba(0,0,0,.2); box-shadow:0 .5rem 1rem rgba(0,0,0,.2); display:none;
+    position:absolute; top:100%; left:0; width:100%; padding:1rem 3%;
+    background:var(--bg-color);
+    border-top:.1rem solid rgba(0,0,0,.2); box-shadow:0 .5rem 1rem rgba(0,0,0,.2);
+    display:none;
   }
   .navbar.active{ display:block; }
   .navbar a{ display:block; font-size:2rem; margin:3rem 0; }
@@ -267,21 +267,10 @@ span{ color:var(--main-color); }
   .portfolio h2{ margin-bottom:3rem; }
 }
 
-/* --- Rail size override (ensure new size always wins) --- */
-.rail-window { padding:0 24px !important; }
+/* Final override to guarantee sizing wins (safe; remove !important if desired) */
+.rail-window { padding:0 24px !important; scroll-padding-right:24px !important; }
 .rail-track { gap:1.2rem !important; }
-.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; }
+.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; scroll-snap-stop: always !important; }
 @media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
 @media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
 @media (max-width:560px){ .rail-card{ flex-basis: 100% !important; } }
-
-@media (max-width:450px){
-  html{ font-size:50%; }
-  .contact form .input-box input{ width:100%; }
-}
-@media (max-width:450px){
-  .home-img img{ width:90vw; }
-  .about-img img{ width:90vw; }
-  .footer{ flex-direction:column-reverse; }
-  .footer p{ text-align:center; margin-top:2rem; }
-}
