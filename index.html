@@ -7,11 +7,13 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=11" />
+    <link rel="stylesheet" href="style.css?v=12" />
   </head>
   <body>
+    <!-- Preloader -->
     <div id="preloader"></div>
 
+    <!-- Header -->
     <header class="header">
       <a href="#" class="logo">Portfolio.</a>
       <i class="bx bx-menu" id="menu-icon"></i>
@@ -25,6 +27,7 @@
       </nav>
     </header>
 
+    <!-- Home -->
     <section class="home" id="home">
       <div class="home-content">
         <h3>Hello, It's Me</h3>
@@ -46,6 +49,7 @@
       </div>
     </section>
 
+    <!-- About -->
     <section class="about" id="about">
       <div class="about-img">
         <img src="images/pic2.png" alt="" />
@@ -58,6 +62,7 @@
       </div>
     </section>
 
+    <!-- Expertise -->
     <section class="expertise" id="expertise">
       <h2 class="heading">My <span>Expertise</span></h2>
       <div class="expertise-container">
@@ -117,6 +122,7 @@
       </div>
     </section>
 
+    <!-- Services -->
     <section class="services" id="services">
       <h2 class="heading">My <span>Services</span></h2>
       <div class="services-container">
@@ -141,7 +147,7 @@
       </div>
     </section>
 
-    <!-- Netflix-like rail -->
+    <!-- Latest Projects: Netflix-like rail -->
     <section class="portfolio" id="portfolio">
       <h2 class="heading">Latest <span>Projects</span></h2>
 
@@ -218,7 +224,7 @@
               </article>
             </li>
 
-            <!-- End-cap -->
+            <!-- End-cap ensures last card can fully enter view -->
             <li class="rail-endcap" aria-hidden="true"></li>
           </ul>
         </div>
@@ -229,6 +235,7 @@
       </div>
     </section>
 
+    <!-- Contact -->
     <section class="contact" id="contact">
       <h2 class="heading">Contact <span>Me!</span></h2>
       <form action="https://api.web3forms.com/submit" method="POST">
@@ -247,6 +254,7 @@
       </form>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
       <div class="footer-text">
         <p>Copyright © 2025 by Uday Sutradhar | All Rights Reserved</p>
@@ -256,6 +264,7 @@
       </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script>
@@ -268,7 +277,7 @@
       const navbar = document.querySelector('.navbar');
       menuIcon.onclick = () => { menuIcon.classList.toggle('bx-x'); navbar.classList.toggle('active'); };
 
-      // Sticky + active links
+      // Active nav + sticky header
       const sections = document.querySelectorAll('section');
       const navLinks = document.querySelectorAll('header nav a');
       window.onscroll = () => {
@@ -277,7 +286,7 @@
           const offset = sec.offsetTop - 150;
           const height = sec.offsetHeight;
           const id = sec.getAttribute('id');
-          if(top >= offset && top < offset + height) {
+          if (top >= offset && top < offset + height) {
             navLinks.forEach(links => {
               links.classList.remove('active');
               const el = document.querySelector('header nav a[href*=' + id + ']');
@@ -285,7 +294,8 @@
             });
           }
         });
-        document.querySelector('header').classList.toggle('sticky', window.scrollY > 100);
+        const header = document.querySelector('header');
+        header.classList.toggle('sticky', window.scrollY > 100);
         menuIcon.classList.remove('bx-x');
         navbar.classList.remove('active');
       };
@@ -303,7 +313,7 @@
         typeSpeed: 100, backSpeed: 100, backDelay: 1000, loop: true
       });
 
-      // Rail logic
+      // Netflix-like rail
       const rail = document.querySelector('.rail');
       const railWindow = document.querySelector('.rail-window');
       const track = document.querySelector('.rail-track');
@@ -318,9 +328,11 @@
         return Math.round(rect.width + gap);
       }
 
+      // Snap after wheel/drag to align perfectly to a card
+      let snapTimeout;
       function snapToNearest() {
-        clearTimeout(snapToNearest._t);
-        snapToNearest._t = setTimeout(() => {
+        clearTimeout(snapTimeout);
+        snapTimeout = setTimeout(() => {
           const step = cardStep();
           if (!step) return;
           const maxL = Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
@@ -329,29 +341,28 @@
         }, 80);
       }
 
+      // End-clamped paging with 0.5 tolerance (from your diagnostics)
       function page(dir = 1) {
         const w = railWindow;
         const step = cardStep();
         const maxL = Math.max(0, w.scrollWidth - w.clientWidth);
         const next = w.scrollLeft + dir * step;
 
-        // Jump to exact end if this step would reach/past the end
-        if (dir > 0 && next >= maxL - 1) {
+        if (dir > 0 && next >= maxL - 0.5) {
           w.scrollTo({ left: maxL, behavior: 'smooth' });
           return;
         }
-
         const clamped = Math.max(0, Math.min(next, maxL));
         w.scrollTo({ left: clamped, behavior: 'smooth' });
       }
 
-      prevBtn?.addEventListener('click', () => page(-1));
-      nextBtn?.addEventListener('click', () => page(1));
+      prevBtn.addEventListener('click', () => page(-1));
+      nextBtn.addEventListener('click', () => page(1));
 
-      rail?.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
-      rail?.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
+      rail.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
+      rail.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
 
-      railWindow?.addEventListener('wheel', (e) => {
+      railWindow.addEventListener('wheel', (e) => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
           railWindow.scrollLeft += e.deltaY;
@@ -361,7 +372,7 @@
 
       // Drag to scroll with snap
       let isDown = false, startX = 0, startLeft = 0;
-      railWindow?.addEventListener('mousedown', (e) => {
+      railWindow.addEventListener('mousedown', (e) => {
         isDown = true; railWindow.classList.add('dragging');
         startX = e.pageX; startLeft = railWindow.scrollLeft;
       });
@@ -375,14 +386,12 @@
         railWindow.scrollLeft = startLeft - (e.pageX - startX);
       });
 
-      railWindow?.addEventListener('keydown', (e) => {
+      railWindow.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') page(1);
         if (e.key === 'ArrowLeft')  page(-1);
       });
 
-      window.addEventListener('resize', snapToNearest);
-
-      // Lazy-load
+      // Lazy-load images except first two
       document.querySelectorAll('.rail-card img').forEach((img, i) => {
         img.loading = i > 1 ? 'lazy' : 'eager';
       });
