@@ -187,7 +187,8 @@ span{ color:var(--main-color); }
 }
 .portfolio-box:hover img{ transform: scale(1.07); }
 .portfolio-box .portfolio-layer{
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.65) 100%);
   display:flex; justify-content:flex-end; align-items:flex-start; flex-direction:column;
   padding: 1.2rem; opacity: 0; transform: translateY(6%); transition: .25s ease;
