@@ -20,8 +20,7 @@ section{ min-height:100vh; padding:10rem 9% 2rem; }
 /* Preloader */
 #preloader{
   background:#000 url(images/giphy.gif) no-repeat center center;
-  background-size:5%;
-  height:100vh; width:100%;
+  background-size:5%; height:100vh; width:100%;
   position:fixed; inset:0; z-index:100;
 }
 
@@ -44,11 +43,7 @@ section{ min-height:100vh; padding:10rem 9% 2rem; }
 span{ color:var(--main-color); }
 .home-content h1{ font-size:5.6rem; font-weight:700; line-height:1.3; }
 .home-img img{ width:35vw; animation:floatImage 4s ease-in-out infinite; }
-@keyframes floatImage{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-2.4rem)}
-  100%{transform:translateY(0)}
-}
+@keyframes floatImage{ 0%{transform:translateY(0)} 50%{transform:translateY(-2.4rem)} 100%{transform:translateY(0)} }
 .home-content p{ font-size:1.6rem; }
 
 /* Socials & buttons */
@@ -89,8 +84,7 @@ span{ color:var(--main-color); }
 .services h2{ margin-bottom:5rem; }
 .services-container{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:2rem; }
 .services-container .services-box{
-  flex:1 1 30rem; background:var(--bg-color);
-  padding:3rem 2rem 4rem; border-radius:2rem; text-align:center;
+  flex:1 1 30rem; background:var(--bg-color); padding:3rem 2rem 4rem; border-radius:2rem; text-align:center;
   border:.2rem solid var(--bg-color); transition:.5s ease;
 }
 .services-container .services-box:hover{ border-color:var(--main-color); transform:scale(1.02); }
@@ -102,8 +96,7 @@ span{ color:var(--main-color); }
 .expertise h2{ margin-bottom:5rem; }
 .expertise-container{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:2rem; }
 .expertise-container .expertise-box{
-  flex:1 1 30rem; background:var(--second-bg-color);
-  padding:3rem 2rem 4rem; border-radius:2rem; text-align:center;
+  flex:1 1 30rem; background:var(--second-bg-color); padding:3rem 2rem 4rem; border-radius:2rem; text-align:center;
   border:.2rem solid var(--bg-color); transition:.5s ease;
 }
 .expertise-container .expertise-box:hover{ border-color:var(--main-color); transform:scale(1.02); }
@@ -116,17 +109,17 @@ span{ color:var(--main-color); }
 .portfolio{ background:var(--second-bg-color); }
 .portfolio h2{ margin-bottom:2rem; }
 
-/* Netflix-like rail */
+/* Rail */
 .rail{ position:relative; margin-top:1rem; }
 
 .rail-window{
   overflow:auto; overflow-y:hidden;
   scroll-behavior:smooth;
   scroll-snap-type:x proximity;
-  padding: 0 24px;                  /* visual padding both sides */
+  padding: 0 24px;
   scrollbar-width:none; -ms-overflow-style:none;
-  scroll-padding-left: 24px;         /* snap guide at start */
-  scroll-padding-right: 112px;       /* snap guide at end */
+  scroll-padding-left: 24px;
+  scroll-padding-right: 112px; /* ensure last card can fully snap */
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -139,13 +132,13 @@ span{ color:var(--main-color); }
 
 /* End-cap so last card never clips */
 .rail-endcap{
-  flex: 0 0 112px;                   /* matches scroll-padding-right */
+  flex: 0 0 112px; /* matches scroll-padding-right */
   pointer-events: none;
 }
 
-/* Cards: 3 per desktop, 4 very-wide, 2 tablet, 1 phone */
+/* Cards */
 .rail-card{
-  flex: 0 0 calc((100% - 2.4rem) / 3);
+  flex: 0 0 calc((100% - 2.4rem) / 3); /* 3 per view on desktop */
   scroll-snap-align: start;
   scroll-snap-stop: always;
   aspect-ratio: 16/9;
@@ -153,21 +146,16 @@ span{ color:var(--main-color); }
 }
 
 /* Do not snap the last card so it won't tug back */
-.rail-track .rail-card:last-of-type{
-  scroll-snap-align: none;
-}
+.rail-track .rail-card:last-of-type{ scroll-snap-align: none; }
 
 @media (min-width:1400px){
-  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); }
-}
-@media (max-width:1200px){
-  .rail-card{ flex-basis: calc((100% - 2.4rem) / 3); }
+  .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); } /* 4 per very wide */
 }
 @media (max-width:900px){
-  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); }
+  .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); } /* 2 per tablets */
 }
 @media (max-width:560px){
-  .rail-card{ flex-basis: 100%; }
+  .rail-card{ flex-basis: 100%; }                      /* 1 per phones */
 }
 
 /* Hover lift (desktop only) */
@@ -199,9 +187,7 @@ span{ color:var(--main-color); }
   position:absolute; inset:0;
   background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.65) 100%);
   display:flex; justify-content:flex-end; align-items:flex-start; flex-direction:column;
-  padding: 1.2rem;
-  opacity: 0; transform: translateY(6%);
-  transition: .25s ease;
+  padding: 1.2rem; opacity: 0; transform: translateY(6%); transition: .25s ease;
 }
 .portfolio-box:hover .portfolio-layer{ opacity:1; transform: translateY(0); }
 .portfolio-layer h4{ font-size:1.6rem; line-height:1.2; }
@@ -212,7 +198,7 @@ span{ color:var(--main-color); }
   background: var(--text-color); color: var(--second-bg-color);
 }
 
-/* Edge arrows (narrower so they don't overlay the last card too much) */
+/* Arrows (narrower so they don't overlay the last card too much) */
 .rail-btn{
   position:absolute; top:50%; transform:translateY(-50%);
   width:36px; height:84px;
@@ -284,7 +270,7 @@ span{ color:var(--main-color); }
   .portfolio h2{ margin-bottom:3rem; }
 }
 
-/* Final overrides (can remove !important once verified) */
+/* Final safety overrides (remove !important later if you wish) */
 .rail-window { padding:0 24px !important; scroll-padding-left:24px !important; scroll-padding-right:112px !important; }
 .rail-track { gap:1.2rem !important; }
 .rail-endcap{ flex:0 0 112px !important; }
