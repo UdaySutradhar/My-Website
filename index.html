@@ -7,13 +7,11 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=10" />
+    <link rel="stylesheet" href="style.css?v=11" />
   </head>
   <body>
-    <!-- Preloader -->
     <div id="preloader"></div>
 
-    <!-- Header -->
     <header class="header">
       <a href="#" class="logo">Portfolio.</a>
       <i class="bx bx-menu" id="menu-icon"></i>
@@ -27,7 +25,6 @@
       </nav>
     </header>
 
-    <!-- Home -->
     <section class="home" id="home">
       <div class="home-content">
         <h3>Hello, It's Me</h3>
@@ -49,7 +46,6 @@
       </div>
     </section>
 
-    <!-- About -->
     <section class="about" id="about">
       <div class="about-img">
         <img src="images/pic2.png" alt="" />
@@ -62,7 +58,6 @@
       </div>
     </section>
 
-    <!-- Expertise -->
     <section class="expertise" id="expertise">
       <h2 class="heading">My <span>Expertise</span></h2>
       <div class="expertise-container">
@@ -122,7 +117,6 @@
       </div>
     </section>
 
-    <!-- Services -->
     <section class="services" id="services">
       <h2 class="heading">My <span>Services</span></h2>
       <div class="services-container">
@@ -147,7 +141,7 @@
       </div>
     </section>
 
-    <!-- Latest Projects: Netflix-like rail -->
+    <!-- Netflix-like rail -->
     <section class="portfolio" id="portfolio">
       <h2 class="heading">Latest <span>Projects</span></h2>
 
@@ -224,7 +218,7 @@
               </article>
             </li>
 
-            <!-- End-cap ensures last card can fully enter view -->
+            <!-- End-cap -->
             <li class="rail-endcap" aria-hidden="true"></li>
           </ul>
         </div>
@@ -235,7 +229,6 @@
       </div>
     </section>
 
-    <!-- Contact -->
     <section class="contact" id="contact">
       <h2 class="heading">Contact <span>Me!</span></h2>
       <form action="https://api.web3forms.com/submit" method="POST">
@@ -254,7 +247,6 @@
       </form>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
       <div class="footer-text">
         <p>Copyright © 2025 by Uday Sutradhar | All Rights Reserved</p>
@@ -264,7 +256,6 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script>
@@ -277,7 +268,7 @@
       const navbar = document.querySelector('.navbar');
       menuIcon.onclick = () => { menuIcon.classList.toggle('bx-x'); navbar.classList.toggle('active'); };
 
-      // Active nav + sticky header
+      // Sticky + active links
       const sections = document.querySelectorAll('section');
       const navLinks = document.querySelectorAll('header nav a');
       window.onscroll = () => {
@@ -294,8 +285,7 @@
             });
           }
         });
-        const header = document.querySelector('header');
-        header.classList.toggle('sticky', window.scrollY > 100);
+        document.querySelector('header').classList.toggle('sticky', window.scrollY > 100);
         menuIcon.classList.remove('bx-x');
         navbar.classList.remove('active');
       };
@@ -313,7 +303,7 @@
         typeSpeed: 100, backSpeed: 100, backDelay: 1000, loop: true
       });
 
-      // Netflix-like rail (robust end handling)
+      // Rail logic
       const rail = document.querySelector('.rail');
       const railWindow = document.querySelector('.rail-window');
       const track = document.querySelector('.rail-track');
@@ -327,36 +317,32 @@
         const gap = parseFloat(getComputedStyle(track).gap || '0');
         return Math.round(rect.width + gap);
       }
-      function maxScrollLeft() {
-        return Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
-      }
 
-      // Snap helper to nearest card after scroll/drag/wheel/resize
-      let snapTimeout;
       function snapToNearest() {
-        clearTimeout(snapTimeout);
-        snapTimeout = setTimeout(() => {
+        clearTimeout(snapToNearest._t);
+        snapToNearest._t = setTimeout(() => {
           const step = cardStep();
           if (!step) return;
+          const maxL = Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
           const nearest = Math.round(railWindow.scrollLeft / step) * step;
-          railWindow.scrollTo({ left: Math.min(nearest, maxScrollLeft()), behavior: 'smooth' });
+          railWindow.scrollTo({ left: Math.min(nearest, maxL), behavior: 'smooth' });
         }, 80);
       }
 
-      // Page with end-clamp and jump-to-end fallback
       function page(dir = 1) {
-        const maxL = maxScrollLeft();
-        if (dir > 0) {
-          // If already within one viewport of end, jump to absolute end
-          if (railWindow.scrollLeft + railWindow.clientWidth >= maxL - 4) {
-            railWindow.scrollTo({ left: maxL, behavior: 'smooth' });
-            return;
-          }
-        }
+        const w = railWindow;
         const step = cardStep();
-        const next = railWindow.scrollLeft + dir * step;
+        const maxL = Math.max(0, w.scrollWidth - w.clientWidth);
+        const next = w.scrollLeft + dir * step;
+
+        // Jump to exact end if this step would reach/past the end
+        if (dir > 0 && next >= maxL - 1) {
+          w.scrollTo({ left: maxL, behavior: 'smooth' });
+          return;
+        }
+
         const clamped = Math.max(0, Math.min(next, maxL));
-        railWindow.scrollTo({ left: clamped, behavior: 'smooth' });
+        w.scrollTo({ left: clamped, behavior: 'smooth' });
       }
 
       prevBtn?.addEventListener('click', () => page(-1));
@@ -365,7 +351,6 @@
       rail?.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
       rail?.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
 
-      // Wheel: vertical -> horizontal, then snap
       railWindow?.addEventListener('wheel', (e) => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
@@ -387,8 +372,7 @@
       });
       window.addEventListener('mousemove', (e) => {
         if (!isDown) return;
-        const dx = e.pageX - startX;
-        railWindow.scrollLeft = startLeft - dx;
+        railWindow.scrollLeft = startLeft - (e.pageX - startX);
       });
 
       railWindow?.addEventListener('keydown', (e) => {
@@ -396,10 +380,9 @@
         if (e.key === 'ArrowLeft')  page(-1);
       });
 
-      // On resize, re-snap so end remains reachable
       window.addEventListener('resize', snapToNearest);
 
-      // Lazy-load images except first two
+      // Lazy-load
       document.querySelectorAll('.rail-card img').forEach((img, i) => {
         img.loading = i > 1 ? 'lazy' : 'eager';
       });
