@@ -7,7 +7,7 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=9" />
+    <link rel="stylesheet" href="style.css?v=10" />
   </head>
   <body>
     <!-- Preloader -->
@@ -327,7 +327,6 @@
         const gap = parseFloat(getComputedStyle(track).gap || '0');
         return Math.round(rect.width + gap);
       }
-
       function maxScrollLeft() {
         return Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
       }
@@ -344,15 +343,17 @@
         }, 80);
       }
 
+      // Page with end-clamp and jump-to-end fallback
       function page(dir = 1) {
-        const step = cardStep();
         const maxL = maxScrollLeft();
-        // If near end and moving forward, clamp hard to end
-        if (dir > 0 && maxL - railWindow.scrollLeft <= step) {
-          railWindow.scrollTo({ left: maxL, behavior: 'smooth' });
-          return;
+        if (dir > 0) {
+          // If already within one viewport of end, jump to absolute end
+          if (railWindow.scrollLeft + railWindow.clientWidth >= maxL - 4) {
+            railWindow.scrollTo({ left: maxL, behavior: 'smooth' });
+            return;
+          }
         }
-        // Normal page by one card
+        const step = cardStep();
         const next = railWindow.scrollLeft + dir * step;
         const clamped = Math.max(0, Math.min(next, maxL));
         railWindow.scrollTo({ left: clamped, behavior: 'smooth' });
