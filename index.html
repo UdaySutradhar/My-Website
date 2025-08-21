@@ -7,7 +7,7 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=17" />
+    <link rel="stylesheet" href="style.css?v=18" />
   </head>
   <body>
     <!-- Preloader -->
@@ -151,7 +151,6 @@
     <section class="portfolio" id="portfolio">
       <h2 class="heading">Latest <span>Projects</span></h2>
 
-      <!-- rail -->
       <div class="rail">
         <button class="rail-btn rail-prev" aria-label="Previous">
           <i class='bx bx-chevron-left'></i>
@@ -234,7 +233,6 @@
           <i class='bx bx-chevron-right'></i>
         </button>
       </div>
-      <!-- /rail -->
     </section>
 
     <!-- Contact -->
@@ -269,6 +267,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
     <script>
       // Preloader
       const loader = document.getElementById("preloader");
@@ -315,70 +314,86 @@
         typeSpeed: 100, backSpeed: 100, backDelay: 1000, loop: true
       });
 
-      // Netflix-like rail logic
-      const rail = document.querySelector('.rail');
+      // Netflix-like rail logic (hardened)
+      const rail       = document.querySelector('.rail');
       const railWindow = document.querySelector('.rail-window');
-      const track = document.querySelector('.rail-track');
-      const prevBtn = document.querySelector('.rail-prev');
-      const nextBtn = document.querySelector('.rail-next');
+      const track      = document.querySelector('.rail-track');
+      const prevBtn    = document.querySelector('.rail-prev');
+      const nextBtn    = document.querySelector('.rail-next');
 
-      // Step by one card + gap
+      function ensureEndcapLast() {
+        if (!track) return;
+        track.querySelectorAll('.rail-endcap').forEach(ec => ec.remove());
+        const endcap = document.createElement('li');
+        endcap.className = 'rail-endcap';
+        endcap.setAttribute('aria-hidden', 'true');
+        track.appendChild(endcap);
+      }
+      ensureEndcapLast();
+
       function cardStep() {
-        const firstCard = track?.querySelector('.rail-card');
-        if (!firstCard) return railWindow.clientWidth;
-        const rect = firstCard.getBoundingClientRect();
-        const gap = parseFloat(getComputedStyle(track).gap || '0');
-        return Math.round(rect.width + gap);
+        const first = track?.querySelector('.rail-card');
+        if (!first) return railWindow?.clientWidth || 0;
+        const rect = first.getBoundingClientRect();
+        const gap  = parseFloat(getComputedStyle(track).gap || '0');
+        return Math.max(1, Math.round(rect.width + gap));
       }
 
-      // Snap to nearest after wheel/drag
-      let snapTimeout;
-      function snapToNearest() {
-        clearTimeout(snapTimeout);
+      function maxLeft() {
+        if (!railWindow) return 0;
+        return Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
+      }
+
+      let snapTimeout = null;
+      function cancelSnap() {
+        if (snapTimeout) { clearTimeout(snapTimeout); snapTimeout = null; }
+      }
+
+      function snapToNearest(delay = 80) {
+        cancelSnap();
         snapTimeout = setTimeout(() => {
           const step = cardStep();
           if (!step) return;
-          const maxL = Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
           const nearest = Math.round(railWindow.scrollLeft / step) * step;
-          railWindow.scrollTo({ left: Math.min(nearest, maxL), behavior: 'smooth' });
-        }, 80);
+          railWindow.scrollTo({ left: Math.min(nearest, maxLeft()), behavior: 'smooth' });
+        }, delay);
       }
 
-      // End-clamped paging with fractional tolerance
       function page(dir = 1) {
-        const w = railWindow;
+        cancelSnap();
         const step = cardStep();
-        const maxL = Math.max(0, w.scrollWidth - w.clientWidth);
-        const next = w.scrollLeft + dir * step;
-        if (dir > 0 && next >= maxL - 0.5) {
-          w.scrollTo({ left: maxL, behavior: 'smooth' });
+        const maxL = maxLeft();
+        const next = railWindow.scrollLeft + dir * step;
+        const tol  = 0.5;
+
+        if (dir > 0 && next >= maxL - tol) {
+          railWindow.scrollTo({ left: maxL, behavior: 'smooth' });
           return;
         }
-        const clamped = Math.max(0, Math.min(next, maxL));
-        w.scrollTo({ left: clamped, behavior: 'smooth' });
+        if (dir < 0 && next <= 0 + tol) {
+          railWindow.scrollTo({ left: 0, behavior: 'smooth' });
+          return;
+        }
+        railWindow.scrollTo({ left: Math.max(0, Math.min(next, maxL)), behavior: 'smooth' });
       }
 
-      // Final fallback: explicitly align the last card
       function scrollLastIntoView() {
-        const lastCard = document.querySelector('.rail-track .rail-card:last-of-type');
+        const lastCard = track?.querySelector('.rail-card:last-of-type');
         if (!lastCard) return;
         lastCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
       }
 
-      prevBtn.addEventListener('click', () => page(-1));
-      nextBtn.addEventListener('click', () => {
-        const maxL = railWindow.scrollWidth - railWindow.clientWidth;
-        const nearEnd = maxL - railWindow.scrollLeft <= cardStep();
+      prevBtn?.addEventListener('click', () => page(-1));
+      nextBtn?.addEventListener('click', () => {
+        const nearEnd = (maxLeft() - railWindow.scrollLeft) <= cardStep();
         page(1);
         if (nearEnd) setTimeout(scrollLastIntoView, 180);
       });
 
-      // Show/hide arrows
-      rail.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
-      rail.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
+      rail?.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
+      rail?.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
 
-      // Wheel: vertical -> horizontal, then snap
-      railWindow.addEventListener('wheel', (e) => {
+      railWindow?.addEventListener('wheel', (e) => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
           railWindow.scrollLeft += e.deltaY;
@@ -386,40 +401,39 @@
         }
       }, { passive: false });
 
-      // Drag to scroll + snap on release
       let isDown = false, startX = 0, startLeft = 0;
-      railWindow.addEventListener('mousedown', (e) => {
-        isDown = true; railWindow.classList.add('dragging');
-        startX = e.pageX; startLeft = railWindow.scrollLeft;
+      railWindow?.addEventListener('mousedown', (e) => {
+        isDown = true;
+        railWindow.classList.add('dragging');
+        startX = e.pageX;
+        startLeft = railWindow.scrollLeft;
+        cancelSnap();
       });
       window.addEventListener('mouseup', () => {
         if (!isDown) return;
-        isDown = false; railWindow.classList.remove('dragging');
-        snapToNearest();
+        isDown = false;
+        railWindow.classList.remove('dragging');
+        snapToNearest(60);
       });
       window.addEventListener('mousemove', (e) => {
         if (!isDown) return;
         railWindow.scrollLeft = startLeft - (e.pageX - startX);
       });
 
-      railWindow.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') page(1);
-        if (e.key === 'ArrowLeft')  page(-1);
+      railWindow?.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); page(1); }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); page(-1); }
       });
 
-      // Self-heal: ensure end-cap is the final child inside the list
-      (function ensureEndcapLast() {
-        const list = document.querySelector('.rail-track');
-        if (!list) return;
-        const endcaps = list.querySelectorAll('.rail-endcap');
-        endcaps.forEach(ec => ec.remove());
-        const endcap = document.createElement('li');
-        endcap.className = 'rail-endcap';
-        endcap.setAttribute('aria-hidden', 'true');
-        list.appendChild(endcap);
-      })();
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          ensureEndcapLast();
+          snapToNearest(20);
+        }, 100);
+      });
 
-      // Lazy-load images except first two
       document.querySelectorAll('.rail-card img').forEach((img, i) => {
         img.loading = i > 1 ? 'lazy' : 'eager';
       });
