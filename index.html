@@ -7,7 +7,7 @@
     <title>Uday Sutradhar : Portfolio</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/51edde9890.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=18" />
+    <link rel="stylesheet" href="style.css?v=19" />
   </head>
   <body>
     <!-- Preloader -->
@@ -147,7 +147,7 @@
       </div>
     </section>
 
-    <!-- Portfolio (Rail) -->
+    <!-- Portfolio (Netflix-style rail) -->
     <section class="portfolio" id="portfolio">
       <h2 class="heading">Latest <span>Projects</span></h2>
 
@@ -224,7 +224,7 @@
               </article>
             </li>
 
-            <!-- End-cap must be the final child inside the list -->
+            <!-- End-cap must be the final child -->
             <li class="rail-endcap" aria-hidden="true"></li>
           </ul>
         </div>
@@ -314,129 +314,121 @@
         typeSpeed: 100, backSpeed: 100, backDelay: 1000, loop: true
       });
 
-      // Netflix-like rail logic (hardened)
-      const rail       = document.querySelector('.rail');
-      const railWindow = document.querySelector('.rail-window');
-      const track      = document.querySelector('.rail-track');
-      const prevBtn    = document.querySelector('.rail-prev');
-      const nextBtn    = document.querySelector('.rail-next');
+      // Netflix-like rail logic for Latest Projects
+      (function(){
+        const rail       = document.querySelector('.rail');
+        const railWindow = document.querySelector('.rail-window');
+        const track      = document.querySelector('.rail-track');
+        const prevBtn    = document.querySelector('.rail-prev');
+        const nextBtn    = document.querySelector('.rail-next');
 
-      function ensureEndcapLast() {
-        if (!track) return;
-        track.querySelectorAll('.rail-endcap').forEach(ec => ec.remove());
-        const endcap = document.createElement('li');
-        endcap.className = 'rail-endcap';
-        endcap.setAttribute('aria-hidden', 'true');
-        track.appendChild(endcap);
-      }
-      ensureEndcapLast();
+        // Ensure end-cap exists and is last
+        function ensureEndcapLast() {
+          if (!track) return;
+          track.querySelectorAll('.rail-endcap').forEach(ec => ec.remove());
+          const li = document.createElement('li');
+          li.className = 'rail-endcap';
+          li.setAttribute('aria-hidden','true');
+          track.appendChild(li);
+        }
+        ensureEndcapLast();
 
-      function cardStep() {
-        const first = track?.querySelector('.rail-card');
-        if (!first) return railWindow?.clientWidth || 0;
-        const rect = first.getBoundingClientRect();
-        const gap  = parseFloat(getComputedStyle(track).gap || '0');
-        return Math.max(1, Math.round(rect.width + gap));
-      }
+        // Step = card width + gap, rounded to int (prevents DPI/zoom drift)
+        function cardStep() {
+          const first = track?.querySelector('.rail-card');
+          if (!first) return railWindow?.clientWidth || 0;
+          const rect = first.getBoundingClientRect();
+          const gap  = parseFloat(getComputedStyle(track).gap || '0');
+          return Math.max(1, Math.round(rect.width + gap));
+        }
 
-      function maxLeft() {
-        if (!railWindow) return 0;
-        return Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
-      }
+        function maxLeft() {
+          return Math.max(0, railWindow.scrollWidth - railWindow.clientWidth);
+        }
 
-      let snapTimeout = null;
-      function cancelSnap() {
-        if (snapTimeout) { clearTimeout(snapTimeout); snapTimeout = null; }
-      }
+        // Debounced snap
+        let snapT = null;
+        function cancelSnap(){ if (snapT) { clearTimeout(snapT); snapT = null; } }
+        function snapToNearest(delay=80){
+          cancelSnap();
+          snapT = setTimeout(()=>{
+            const step = cardStep();
+            if (!step) return;
+            const nearest = Math.round(railWindow.scrollLeft / step) * step;
+            railWindow.scrollTo({ left: Math.min(nearest, maxLeft()), behavior: 'smooth' });
+          }, delay);
+        }
 
-      function snapToNearest(delay = 80) {
-        cancelSnap();
-        snapTimeout = setTimeout(() => {
+        // Page by one card; clamp at ends with small tolerance
+        function page(dir=1){
+          cancelSnap();
           const step = cardStep();
-          if (!step) return;
-          const nearest = Math.round(railWindow.scrollLeft / step) * step;
-          railWindow.scrollTo({ left: Math.min(nearest, maxLeft()), behavior: 'smooth' });
-        }, delay);
-      }
-
-      function page(dir = 1) {
-        cancelSnap();
-        const step = cardStep();
-        const maxL = maxLeft();
-        const next = railWindow.scrollLeft + dir * step;
-        const tol  = 0.5;
-
-        if (dir > 0 && next >= maxL - tol) {
-          railWindow.scrollTo({ left: maxL, behavior: 'smooth' });
-          return;
+          const maxL = maxLeft();
+          const next = railWindow.scrollLeft + dir*step;
+          const tol  = 0.5;
+          if (dir>0 && next >= maxL - tol) { railWindow.scrollTo({ left:maxL, behavior:'smooth' }); return; }
+          if (dir<0 && next <= 0 + tol)    { railWindow.scrollTo({ left:0,    behavior:'smooth' }); return; }
+          railWindow.scrollTo({ left: Math.max(0, Math.min(next,maxL)), behavior:'smooth' });
         }
-        if (dir < 0 && next <= 0 + tol) {
-          railWindow.scrollTo({ left: 0, behavior: 'smooth' });
-          return;
+
+        function scrollLastIntoView(){
+          const lastCard = track?.querySelector('.rail-card:last-of-type');
+          if (!lastCard) return;
+          lastCard.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'end' });
         }
-        railWindow.scrollTo({ left: Math.max(0, Math.min(next, maxL)), behavior: 'smooth' });
-      }
 
-      function scrollLastIntoView() {
-        const lastCard = track?.querySelector('.rail-card:last-of-type');
-        if (!lastCard) return;
-        lastCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
-      }
+        prevBtn?.addEventListener('click', ()=> page(-1));
+        nextBtn?.addEventListener('click', ()=>{
+          const nearEnd = (maxLeft() - railWindow.scrollLeft) <= cardStep();
+          page(1);
+          if (nearEnd) setTimeout(scrollLastIntoView, 180);
+        });
 
-      prevBtn?.addEventListener('click', () => page(-1));
-      nextBtn?.addEventListener('click', () => {
-        const nearEnd = (maxLeft() - railWindow.scrollLeft) <= cardStep();
-        page(1);
-        if (nearEnd) setTimeout(scrollLastIntoView, 180);
-      });
+        rail?.addEventListener('mouseenter', ()=> rail.classList.add('show-arrows'));
+        rail?.addEventListener('mouseleave', ()=> rail.classList.remove('show-arrows'));
 
-      rail?.addEventListener('mouseenter', () => rail.classList.add('show-arrows'));
-      rail?.addEventListener('mouseleave', () => rail.classList.remove('show-arrows'));
+        railWindow?.addEventListener('wheel', (e)=>{
+          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            railWindow.scrollLeft += e.deltaY;
+            snapToNearest();
+          }
+        }, { passive:false });
 
-      railWindow?.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-          e.preventDefault();
-          railWindow.scrollLeft += e.deltaY;
-          snapToNearest();
-        }
-      }, { passive: false });
+        let isDown = false, startX=0, startLeft=0;
+        railWindow?.addEventListener('mousedown', (e)=>{
+          isDown = true; railWindow.classList.add('dragging');
+          startX = e.pageX; startLeft = railWindow.scrollLeft;
+          cancelSnap();
+        });
+        window.addEventListener('mouseup', ()=>{
+          if (!isDown) return;
+          isDown = false; railWindow.classList.remove('dragging');
+          snapToNearest(60);
+        });
+        window.addEventListener('mousemove', (e)=>{
+          if (!isDown) return;
+          railWindow.scrollLeft = startLeft - (e.pageX - startX);
+        });
 
-      let isDown = false, startX = 0, startLeft = 0;
-      railWindow?.addEventListener('mousedown', (e) => {
-        isDown = true;
-        railWindow.classList.add('dragging');
-        startX = e.pageX;
-        startLeft = railWindow.scrollLeft;
-        cancelSnap();
-      });
-      window.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        railWindow.classList.remove('dragging');
-        snapToNearest(60);
-      });
-      window.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        railWindow.scrollLeft = startLeft - (e.pageX - startX);
-      });
+        railWindow?.addEventListener('keydown', (e)=>{
+          if (e.key === 'ArrowRight') { e.preventDefault(); page(1); }
+          if (e.key === 'ArrowLeft')  { e.preventDefault(); page(-1); }
+        });
 
-      railWindow?.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') { e.preventDefault(); page(1); }
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); page(-1); }
-      });
+        let rT = null;
+        window.addEventListener('resize', ()=>{
+          clearTimeout(rT);
+          rT = setTimeout(()=>{
+            ensureEndcapLast();
+            snapToNearest(20);
+          }, 100);
+        });
 
-      let resizeTimer = null;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          ensureEndcapLast();
-          snapToNearest(20);
-        }, 100);
-      });
-
-      document.querySelectorAll('.rail-card img').forEach((img, i) => {
-        img.loading = i > 1 ? 'lazy' : 'eager';
-      });
+        document.querySelectorAll('.rail-card img').forEach((img,i)=>{
+          img.loading = i > 1 ? 'lazy' : 'eager';
+        });
+      })();
     </script>
   </body>
 </html>
