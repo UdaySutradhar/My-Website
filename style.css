@@ -127,7 +127,7 @@ span{ color:var(--main-color); }
   padding: 0 24px;
   scrollbar-width:none; -ms-overflow-style:none;
   scroll-padding-left: 24px;
-  scroll-padding-right: 112px; /* ensure last card can fully snap on desktop */
+  scroll-padding-right: 112px; /* desktop: last card can fully snap */
 }
 .rail-window::-webkit-scrollbar{ display:none; }
 
@@ -140,7 +140,7 @@ span{ color:var(--main-color); }
 
 /* End-cap so last card never clips */
 .rail-endcap{
-  flex: 0 0 112px; /* matches scroll-padding-right */
+  flex: 0 0 112px; /* matches desktop scroll-padding-right */
   pointer-events: none;
 }
 
@@ -156,26 +156,33 @@ span{ color:var(--main-color); }
 /* Do not snap the last card so it won't tug back */
 .rail-track .rail-card:last-of-type{ scroll-snap-align: none; }
 
-/* Wider screens: 4 per view */
+/* Very wide: 4 per view */
 @media (min-width:1400px){
   .rail-card{ flex-basis: calc((100% - 3.6rem) / 4); }
 }
 
-/* Tablets: 2 per view */
+/* Tablets: 2 per view default (overridden by mobile class below if needed) */
 @media (max-width:900px){
   .rail-card{ flex-basis: calc((100% - 1.2rem) / 2); }
 }
 
-/* Phones: show large card plus a "peek" */
-@media (max-width:560px){
+/* Mobile/Small tablet enforced 1+peek mode via class */
+@media (max-width:768px){
   .rail-window{
-    padding-left:16px;
-    padding-right:48px;            /* smaller end space on phones */
-    scroll-padding-left:16px;
-    scroll-padding-right:48px;
+    padding-left:12px !important;
+    padding-right:44px !important;
+    scroll-padding-left:12px !important;
+    scroll-padding-right:44px !important;
+    mask-image: linear-gradient(90deg, rgba(0,0,0,1) 96%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 96%, rgba(0,0,0,0) 100%);
   }
-  .rail-endcap{ flex: 0 0 48px; }  /* match phone scroll-padding-right */
-  .rail-card{ flex-basis: 88%; }   /* show ~12% of next card as a hint */
+  .rail-endcap{ flex: 0 0 44px !important; }
+  .rail-track{ gap: 12px !important; }
+  .rail--mobilepeek .rail-card{
+    flex: 0 0 clamp(86%, 88vw, 92%) !important;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
 }
 
 /* Hover lift (desktop only) */
@@ -249,7 +256,7 @@ span{ color:var(--main-color); }
 
 /* Always show arrows on touch devices */
 @media (hover:none), (pointer:coarse){
-  .rail .rail-btn{ opacity:1; pointer-events:auto; }
+  .rail .rail-btn{ opacity:1 !important; pointer-events:auto !important; }
 }
 
 /* Contact */
