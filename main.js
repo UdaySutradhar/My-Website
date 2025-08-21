@@ -76,6 +76,16 @@ if (typeof Typed !== 'undefined') {
   }
   ensureEndcapLast();
 
+  // Mobile class to enforce 1+peek layout
+  const MOBILE_BP = 768; // increase to 900 if you want it on small tablets too
+  function isMobileVW(){ return window.innerWidth <= MOBILE_BP; }
+  function applyMobilePeek(){
+    if (!rail) return;
+    if (isMobileVW()) rail.classList.add('rail--mobilepeek');
+    else rail.classList.remove('rail--mobilepeek');
+  }
+  applyMobilePeek();
+
   // Step = card width + gap, rounded to int (prevents DPI/zoom drift)
   function cardStep() {
     const first = track?.querySelector('.rail-card');
@@ -83,7 +93,9 @@ if (typeof Typed !== 'undefined') {
     const rect = first.getBoundingClientRect();
     const styles = getComputedStyle(track);
     const gap = parseFloat(styles.gap || styles.columnGap || '0') || 12; // robust gap fallback
-    return Math.max(1, Math.round(rect.width + gap));
+    const step = rect.width + gap;
+    // Slightly inflate on mobile so rounding never fits 2 cards
+    return Math.max(1, Math.round(isMobileVW() ? step * 1.02 : step));
   }
 
   function maxLeft() {
@@ -100,8 +112,8 @@ if (typeof Typed !== 'undefined') {
       if (!step) return;
       const nearest = Math.round(railWindow.scrollLeft / step) * step;
       const maxL = maxLeft();
-      // On small screens, allow a bit of leeway to avoid tugging back
-      const tol = window.innerWidth <= 560 ? Math.round(step * 0.15) : 0;
+      // More tolerance on mobile to avoid tugging into a 2-card alignment
+      const tol = isMobileVW() ? Math.round(step * 0.18) : 0;
       const target = Math.min(maxL, Math.max(0, nearest));
       if (Math.abs(railWindow.scrollLeft - target) > tol){
         railWindow.scrollTo({ left: target, behavior: 'smooth' });
@@ -178,6 +190,7 @@ if (typeof Typed !== 'undefined') {
   window.addEventListener('resize', ()=>{
     clearTimeout(rT);
     rT = setTimeout(()=>{
+      applyMobilePeek();
       ensureEndcapLast();
       snapToNearest(20);
     }, 100);
