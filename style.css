@@ -269,12 +269,3 @@ span{ color:var(--main-color); }
   .services h2{ margin-bottom:3rem; }
   .portfolio h2{ margin-bottom:3rem; }
 }
-
-/* Final safety overrides (remove !important later if you wish) */
-.rail-window { padding:0 24px !important; scroll-padding-left:24px !important; scroll-padding-right:112px !important; }
-.rail-track { gap:1.2rem !important; }
-.rail-endcap{ flex:0 0 112px !important; }
-.rail-card{ flex: 0 0 calc((100% - 2.4rem) / 3) !important; aspect-ratio: 16/9 !important; scroll-snap-stop: always !important; }
-@media (min-width:1400px){ .rail-card{ flex-basis: calc((100% - 3.6rem) / 4) !important; } }
-@media (max-width:900px){ .rail-card{ flex-basis: calc((100% - 1.2rem) / 2) !important; } }
-@media (max-width:560px){ .rail-card{ flex-basis: 100% !important; } }
