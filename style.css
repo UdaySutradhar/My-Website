@@ -92,18 +92,6 @@ span{ color:var(--main-color); }
 .services-box h3{ font-size:2.6rem; }
 .services-box p{ font-size:1.6rem; margin:1rem 0 3rem; }
 
-/* Expertise */
-.expertise h2{ margin-bottom:5rem; }
-.expertise-container{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:2rem; }
-.expertise-container .expertise-box{
-  flex:1 1 30rem; background:var(--second-bg-color); padding:3rem 2rem 4rem; border-radius:2rem; text-align:center;
-  border:.2rem solid var(--bg-color); transition:.5s ease;
-}
-.expertise-container .expertise-box:hover{ border-color:var(--main-color); transform:scale(1.02); }
-.expertise-box i{ font-size:7rem; color:var(--main-color); }
-.expertise-box h3{ font-size:2.6rem; }
-.expertise-box p{ font-size:1.6rem; margin:1rem 0 3rem; }
-
 /* Portfolio section background */
 #portfolio{ background:var(--bg-color); }
 .portfolio{ background:var(--second-bg-color); }
@@ -198,7 +186,7 @@ span{ color:var(--main-color); }
   background: var(--text-color); color: var(--second-bg-color);
 }
 
-/* Arrows (narrower so they don't overlay the last card too much) */
+/* Arrows (narrow so they don’t overlay the last card) */
 .rail-btn{
   position:absolute; top:50%; transform:translateY(-50%);
   width:36px; height:84px;
